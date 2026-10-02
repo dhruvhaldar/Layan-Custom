@@ -365,6 +365,11 @@ install_icons_and_cursors() {
     cp -rf "${SRC_DIR}/icons/Tela-dark" "${ICONS_DIR}/"
   fi
 
+  if [[ -d "${SRC_DIR}/icons/Bibata-Modern-Classic" ]]; then
+    info "Installing 'Bibata-Modern-Classic'..."
+    cp -rf "${SRC_DIR}/icons/Bibata-Modern-Classic" "${ICONS_DIR}/"
+  fi
+
   if [[ -d "${SRC_DIR}/icons/catppuccin-frappe-mauve-cursors" ]]; then
     info "Installing 'catppuccin-frappe-mauve-cursors'..."
     cp -rf "${SRC_DIR}/icons/catppuccin-frappe-mauve-cursors" "${ICONS_DIR}/"
@@ -455,7 +460,10 @@ apply_desktop_settings() {
     gsettings set org.gnome.desktop.interface icon-theme 'Tela-dark' || true
   fi
 
-  if [[ -d "${ICONS_DIR}/catppuccin-frappe-mauve-cursors" || -d "${HOME}/.icons/catppuccin-frappe-mauve-cursors" ]]; then
+  if [[ -d "${ICONS_DIR}/Bibata-Modern-Classic" || -d "${HOME}/.icons/Bibata-Modern-Classic" || -d "/usr/share/icons/Bibata-Modern-Classic" ]]; then
+    gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Classic' || true
+    gsettings set org.gnome.desktop.interface cursor-size 48 || true
+  elif [[ -d "${ICONS_DIR}/catppuccin-frappe-mauve-cursors" || -d "${HOME}/.icons/catppuccin-frappe-mauve-cursors" ]]; then
     gsettings set org.gnome.desktop.interface cursor-theme 'catppuccin-frappe-mauve-cursors' || true
     gsettings set org.gnome.desktop.interface cursor-size 36 || true
   fi

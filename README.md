@@ -50,6 +50,7 @@ On modern systems, using upstream Layan out of the box leads to several bugs:
 ```
 Layan-Custom/
 ├── install.sh                  # Turnkey installer (themes, fonts, icons, wallpapers, GSettings)
+├── apply-settings.sh           # Dedicated desktop settings script (instant theme/font/cursor switcher)
 ├── uninstall.sh                # Clean uninstaller (restores GNOME defaults)
 ├── src/                        # Full GTK 2, 3, 4, GNOME Shell, XFWM4 & Plank themes
 │   └── libadwaita/             # Custom Libadwaita stylesheets (gtk.css & gtk-dark.css)
@@ -58,7 +59,8 @@ Layan-Custom/
 │   └── jetbrains-mono/         # JetBrains Mono (coding & terminal font)
 ├── icons/                      # Curated companion icon & cursor packs
 │   ├── Tela-dark/              # High-contrast modern flat icons
-│   └── catppuccin-...-cursors/ # Sleek rounded mauve cursors (size 36)
+│   ├── Bibata-Modern-Classic/  # Clean, rounded modern classic cursors (48px)
+│   └── catppuccin-...-cursors/ # Sleek rounded mauve cursors (36px)
 └── wallpapers/                 # Dynamic Amber (dark/light) & Layan originals
 ```
 
@@ -111,12 +113,41 @@ cd ~/Layan-Custom
 1. Installs all theme variants to `~/.local/share/themes/`.
 2. Deploys the custom Libadwaita stylesheet to `~/.config/gtk-4.0/gtk.css` and `gtk-dark.css`.
 3. Installs Inter and JetBrains Mono fonts to `~/.local/share/fonts/` and updates the font cache (`fc-cache`).
-4. Installs the `Tela-dark` icon theme and `catppuccin-frappe-mauve-cursors` to `~/.local/share/icons/`.
+4. Installs `Tela-dark` icons, `Bibata-Modern-Classic` cursors, and `catppuccin-frappe-mauve-cursors` to `~/.local/share/icons/`.
 5. Copies dynamic wallpapers to `~/.local/share/backgrounds/`.
 6. Configures GTK 2 (`~/.gtkrc-2.0`) and GTK 3 (`~/.config/gtk-3.0/settings.ini`).
 7. Applies all desktop GSettings (themes, fonts, cursors, button layout, wallpapers).
 8. Configures Flatpak global theme overrides.
 9. Restarts Nautilus to apply changes immediately.
+
+---
+
+## ⚡ Instant Settings Switcher (`apply-settings.sh`)
+
+If you have already installed the theme files or want to quickly reapply / customize desktop settings without re-copying theme directories:
+
+```bash
+cd ~/Layan-Custom
+./apply-settings.sh
+```
+
+### Options for `apply-settings.sh`:
+- **Switch to Catppuccin cursor**:
+  ```bash
+  ./apply-settings.sh --cursor catppuccin --cursor-size 36
+  ```
+- **Switch to Bibata cursor (Default)**:
+  ```bash
+  ./apply-settings.sh --cursor bibata --cursor-size 48
+  ```
+- **Change Wallpaper Preset**:
+  ```bash
+  ./apply-settings.sh --wallpaper layan   # Or: amber
+  ```
+- **Skip font or Flatpak changes**:
+  ```bash
+  ./apply-settings.sh --no-fonts --no-flatpak
+  ```
 
 ---
 
