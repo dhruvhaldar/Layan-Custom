@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Layan-Custom - Installer Script
-# Optimized and modified Layan GTK theme with modern Libadwaita enhancements.
+# Layan-Custom - Complete Installer Script
+# Optimized and modified Layan GTK theme, Libadwaita styling, icons, fonts & wallpaper
 # ==============================================================================
 
 set -e
@@ -24,20 +24,31 @@ prompt()  { echo -e "${C_PURPLE}${C_BOLD}[?]${C_RESET} ${*}"; }
 
 ROOT_UID=0
 DEST_DIR=""
+ICONS_DIR=""
+FONTS_DIR=""
+WALLPAPERS_DIR=""
 
-# Determine default destination directory
+# Determine default destination directories
 if [[ "$UID" -eq "$ROOT_UID" ]]; then
   DEST_DIR="/usr/share/themes"
   ICONS_DIR="/usr/share/icons"
+  FONTS_DIR="/usr/share/fonts"
+  WALLPAPERS_DIR="/usr/share/backgrounds"
 elif [[ -n "$XDG_DATA_HOME" ]]; then
   DEST_DIR="$XDG_DATA_HOME/themes"
   ICONS_DIR="$XDG_DATA_HOME/icons"
+  FONTS_DIR="$XDG_DATA_HOME/fonts"
+  WALLPAPERS_DIR="$XDG_DATA_HOME/backgrounds"
 elif [[ -d "$HOME/.local/share/themes" ]]; then
   DEST_DIR="$HOME/.local/share/themes"
   ICONS_DIR="$HOME/.local/share/icons"
+  FONTS_DIR="$HOME/.local/share/fonts"
+  WALLPAPERS_DIR="$HOME/.local/share/backgrounds"
 else
   DEST_DIR="$HOME/.themes"
   ICONS_DIR="$HOME/.icons"
+  FONTS_DIR="$HOME/.fonts"
+  WALLPAPERS_DIR="$HOME/.local/share/backgrounds"
 fi
 
 SRC_DIR=$(cd "$(dirname "$0")" && pwd)
@@ -45,11 +56,13 @@ THEME_NAME="Layan"
 COLOR_VARIANTS=('' '-Light' '-Dark')
 SOLID_VARIANTS=('' '-Solid')
 
-# Feature flags (defaults for non-root users)
+# Feature flags (defaults for all-in-one setup)
 INSTALL_LIBADWAITA=true
+INSTALL_FONTS=true
+INSTALL_ICONS=true
+INSTALL_WALLPAPERS=true
 APPLY_GSETTINGS=true
 APPLY_FLATPAK=true
-INSTALL_ICONS=false
 UNINSTALL=false
 
 # Detect GNOME Shell Version
@@ -78,34 +91,35 @@ detect_shell_version() {
 
 usage() {
 cat << EOF
-${C_BOLD}Layan-Custom Theme Installer${C_RESET}
+${C_BOLD}Layan-Custom Complete Setup Installer${C_RESET}
 
 ${C_CYAN}Usage:${C_RESET}
   $0 [OPTIONS]
 
 ${C_CYAN}Options:${C_RESET}
-  -d, --dest DIR         Specify destination themes directory (Default: $DEST_DIR)
-  -n, --name NAME        Specify theme name (Default: $THEME_NAME)
-  -c, --color VARIANTS   Specify color variant(s) [standard|light|dark] (Default: all)
-  -s, --solid VARIANTS   Specify solid variant(s) [standard|solid] (Default: all)
-  -l, --libadwaita       Install modern Libadwaita custom overrides to ~/.config/gtk-4.0
+  -d, --dest DIR         Themes destination directory (Default: $DEST_DIR)
+  -n, --name NAME        Theme name prefix (Default: $THEME_NAME)
+  -c, --color VARIANTS   Color variant(s) [standard|light|dark] (Default: all)
+  -s, --solid VARIANTS   Solid variant(s) [standard|solid] (Default: all)
+  -l, --libadwaita       Install Libadwaita overrides to ~/.config/gtk-4.0
       --no-libadwaita    Skip Libadwaita / GTK4 overrides
-  -g, --gsettings        Apply desktop GSettings automatically (theme, icons, prefer-dark, button layout)
-      --no-gsettings     Do not touch GSettings
-  -f, --flatpak          Configure Flatpak theme overrides
-      --no-flatpak       Skip Flatpak overrides
-  -i, --icons            Install Tela icon theme if missing
-  -u, --uninstall        Uninstall Layan-Custom themes and restore default settings
+      --no-fonts         Skip installing bundled fonts (Inter & JetBrains Mono)
+      --no-icons         Skip installing bundled icons (Tela-dark & cursors)
+      --no-wallpapers    Skip installing bundled wallpapers
+      --no-gsettings     Skip applying GNOME desktop settings
+      --no-flatpak       Skip Flatpak theme overrides
+  -u, --uninstall        Uninstall themes, fonts, icons, wallpapers and restore defaults
   -h, --help             Show this help message
 
 ${C_CYAN}Examples:${C_RESET}
-  ./install.sh                # Full turnkey installation with Libadwaita & GSettings
-  ./install.sh -c dark        # Install Dark variants only
-  ./install.sh --uninstall    # Remove installed files
+  ./install.sh                # Full complete setup (themes, libadwaita, icons, fonts, wallpaper, gsettings)
+  ./install.sh -c dark        # Dark variants only
+  ./install.sh --no-fonts     # Install everything except fonts
+  ./install.sh --uninstall    # Remove installed files and restore settings
 EOF
 }
 
-# Parse command line options
+# Parse options
 selected_colors=()
 selected_solids=()
 
@@ -128,24 +142,24 @@ while [[ $# -gt 0 ]]; do
       INSTALL_LIBADWAITA=false
       shift
       ;;
-    -g|--gsettings)
-      APPLY_GSETTINGS=true
+    --no-fonts)
+      INSTALL_FONTS=false
+      shift
+      ;;
+    --no-icons)
+      INSTALL_ICONS=false
+      shift
+      ;;
+    --no-wallpapers)
+      INSTALL_WALLPAPERS=false
       shift
       ;;
     --no-gsettings)
       APPLY_GSETTINGS=false
       shift
       ;;
-    -f|--flatpak)
-      APPLY_FLATPAK=true
-      shift
-      ;;
     --no-flatpak)
       APPLY_FLATPAK=false
-      shift
-      ;;
-    -i|--icons)
-      INSTALL_ICONS=true
       shift
       ;;
     -u|--uninstall)
@@ -198,7 +212,7 @@ fi
 # ==============================================================================
 # Uninstall Procedure
 # ==============================================================================
-uninstall_theme() {
+uninstall_all() {
   info "Uninstalling ${THEME_NAME} themes from ${DEST_DIR}..."
 
   for color in "${COLOR_VARIANTS[@]}"; do
@@ -223,6 +237,8 @@ uninstall_theme() {
   if command -v gsettings &>/dev/null; then
     info "Restoring default GNOME settings..."
     gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita' || true
+    gsettings set org.gnome.desktop.interface icon-theme 'Adwaita' || true
+    gsettings set org.gnome.desktop.interface cursor-theme 'Adwaita' || true
     gsettings set org.gnome.desktop.wm.preferences theme 'Adwaita' || true
     if command -v dconf &>/dev/null; then
       dconf write /org/gnome/shell/extensions/user-theme/name "''" || true
@@ -234,11 +250,11 @@ uninstall_theme() {
 }
 
 if [[ "$UNINSTALL" == "true" ]]; then
-  uninstall_theme
+  uninstall_all
 fi
 
 # ==============================================================================
-# Install Theme Files
+# Install Themes
 # ==============================================================================
 install_theme_variant() {
   local dest=${1}
@@ -254,7 +270,7 @@ install_theme_variant() {
   [[ -d "${THEME_DIR}" ]] && rm -rf "${THEME_DIR}"
   mkdir -p "${THEME_DIR}"
 
-  info "Installing theme to '${THEME_DIR}'..."
+  info "Installing theme variant to '${THEME_DIR}'..."
 
   # Metadata
   [[ -f "${SRC_DIR}/COPYING" ]] && cp -f "${SRC_DIR}/COPYING" "${THEME_DIR}/"
@@ -271,7 +287,7 @@ Encoding=UTF-8
 GtkTheme=${name}${color}${solid}
 MetacityTheme=${name}${color}${solid}
 IconTheme=Tela-dark
-CursorTheme=Adwaita
+CursorTheme=catppuccin-frappe-mauve-cursors
 ButtonLayout=:minimize,maximize,close
 EOF
 
@@ -313,6 +329,70 @@ EOF
 }
 
 # ==============================================================================
+# Install Bundled Fonts
+# ==============================================================================
+install_fonts() {
+  if [[ ! -d "${SRC_DIR}/fonts" ]]; then
+    return
+  fi
+
+  info "Installing bundled fonts (Inter & JetBrains Mono) to '${FONTS_DIR}'..."
+  mkdir -p "${FONTS_DIR}/inter" "${FONTS_DIR}/jetbrains-mono"
+
+  cp -rf "${SRC_DIR}/fonts/inter/"* "${FONTS_DIR}/inter/" 2>/dev/null || true
+  cp -rf "${SRC_DIR}/fonts/jetbrains-mono/"* "${FONTS_DIR}/jetbrains-mono/" 2>/dev/null || true
+
+  if command -v fc-cache &>/dev/null; then
+    info "Updating system font cache..."
+    fc-cache -f "${FONTS_DIR}" 2>/dev/null || true
+  fi
+  success "Fonts installed successfully!"
+}
+
+# ==============================================================================
+# Install Bundled Icons & Cursors
+# ==============================================================================
+install_icons_and_cursors() {
+  if [[ ! -d "${SRC_DIR}/icons" ]]; then
+    return
+  fi
+
+  info "Installing bundled icons & cursors to '${ICONS_DIR}'..."
+  mkdir -p "${ICONS_DIR}"
+
+  if [[ -d "${SRC_DIR}/icons/Tela-dark" ]]; then
+    info "Installing 'Tela-dark' icon theme..."
+    cp -rf "${SRC_DIR}/icons/Tela-dark" "${ICONS_DIR}/"
+  fi
+
+  if [[ -d "${SRC_DIR}/icons/catppuccin-frappe-mauve-cursors" ]]; then
+    info "Installing 'catppuccin-frappe-mauve-cursors'..."
+    cp -rf "${SRC_DIR}/icons/catppuccin-frappe-mauve-cursors" "${ICONS_DIR}/"
+  fi
+
+  # Create legacy ~/.icons symlink if running as user
+  if [[ "$UID" -ne "$ROOT_UID" && ! -e "${HOME}/.icons" ]]; then
+    ln -s "${ICONS_DIR}" "${HOME}/.icons" 2>/dev/null || true
+  fi
+
+  success "Icons and cursors installed successfully!"
+}
+
+# ==============================================================================
+# Install Bundled Wallpapers
+# ==============================================================================
+install_wallpapers() {
+  if [[ ! -d "${SRC_DIR}/wallpapers" ]]; then
+    return
+  fi
+
+  info "Installing bundled wallpapers to '${WALLPAPERS_DIR}'..."
+  mkdir -p "${WALLPAPERS_DIR}"
+  cp -rf "${SRC_DIR}/wallpapers/"* "${WALLPAPERS_DIR}/" 2>/dev/null || true
+  success "Wallpapers installed successfully!"
+}
+
+# ==============================================================================
 # Libadwaita Custom Configuration (~/.config/gtk-4.0)
 # ==============================================================================
 configure_libadwaita() {
@@ -324,14 +404,9 @@ configure_libadwaita() {
 
   local template="${SRC_DIR}/src/libadwaita/gtk-dark.css"
   if [[ -f "${template}" ]]; then
-    # Substitute @THEME_DIR@ with the actual installed path
     sed "s|@THEME_DIR@|${target_theme_dir}|g" "${template}" > "${gtk4_conf_dir}/gtk-dark.css"
     cp -f "${gtk4_conf_dir}/gtk-dark.css" "${gtk4_conf_dir}/gtk.css"
     success "Configured ~/.config/gtk-4.0/gtk.css and gtk-dark.css"
-  else
-    warn "Template '${template}' not found; using theme css directly."
-    cp -f "${target_theme_dir}/gtk-4.0/gtk-dark.css" "${gtk4_conf_dir}/gtk-dark.css"
-    cp -f "${target_theme_dir}/gtk-4.0/gtk.css" "${gtk4_conf_dir}/gtk.css"
   fi
 }
 
@@ -367,16 +442,52 @@ apply_desktop_settings() {
     return
   fi
 
-  info "Applying GNOME desktop settings..."
+  info "Applying complete GNOME desktop settings..."
+
+  # Theme & Dark Mode
   gsettings set org.gnome.desktop.interface gtk-theme "${THEME_NAME}-Dark" || true
   gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || true
   gsettings set org.gnome.desktop.wm.preferences theme "${THEME_NAME}-Dark" || true
   gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close' || true
 
+  # Icons & Cursors
   if [[ -d "${ICONS_DIR}/Tela-dark" || -d "${HOME}/.icons/Tela-dark" || -d "/usr/share/icons/Tela-dark" ]]; then
     gsettings set org.gnome.desktop.interface icon-theme 'Tela-dark' || true
   fi
 
+  if [[ -d "${ICONS_DIR}/catppuccin-frappe-mauve-cursors" || -d "${HOME}/.icons/catppuccin-frappe-mauve-cursors" ]]; then
+    gsettings set org.gnome.desktop.interface cursor-theme 'catppuccin-frappe-mauve-cursors' || true
+    gsettings set org.gnome.desktop.interface cursor-size 36 || true
+  fi
+
+  # Fonts
+  gsettings set org.gnome.desktop.interface font-name 'Inter Display 11' || true
+  gsettings set org.gnome.desktop.interface document-font-name 'Inter 11' || true
+  gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrains Mono 12' || true
+  gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Inter Display Bold 11' || true
+
+  # Wallpaper
+  local dark_wp=""
+  local light_wp=""
+  if [[ -f "${WALLPAPERS_DIR}/amber-d.jxl" ]]; then
+    dark_wp="file://${WALLPAPERS_DIR}/amber-d.jxl"
+    light_wp="file://${WALLPAPERS_DIR}/amber-l.jxl"
+  elif [[ -f "${WALLPAPERS_DIR}/amber-d.jpg" ]]; then
+    dark_wp="file://${WALLPAPERS_DIR}/amber-d.jpg"
+    light_wp="file://${WALLPAPERS_DIR}/amber-l.jpg"
+  elif [[ -f "${WALLPAPERS_DIR}/layan-dark.png" ]]; then
+    dark_wp="file://${WALLPAPERS_DIR}/layan-dark.png"
+    light_wp="file://${WALLPAPERS_DIR}/layan-light.png"
+  fi
+
+  if [[ -n "${dark_wp}" ]]; then
+    gsettings set org.gnome.desktop.background picture-uri-dark "${dark_wp}" || true
+    gsettings set org.gnome.desktop.background picture-uri "${light_wp:-$dark_wp}" || true
+    gsettings set org.gnome.desktop.background primary-color '#ff7800' || true
+    gsettings set org.gnome.desktop.background picture-options 'zoom' || true
+  fi
+
+  # Shell theme
   if command -v dconf &>/dev/null; then
     dconf write /org/gnome/shell/extensions/user-theme/name "'${THEME_NAME}-Dark'" 2>/dev/null || true
   fi
@@ -402,32 +513,13 @@ configure_flatpak() {
   flatpak override --user \
     --filesystem=xdg-data/themes:ro \
     --filesystem=xdg-data/icons:ro \
+    --filesystem=xdg-data/fonts:ro \
     --filesystem=~/.themes:ro \
     --filesystem=~/.icons:ro \
+    --filesystem=~/.fonts:ro \
     --env=GTK_THEME="${THEME_NAME}-Dark" \
     --env=ICON_THEME="Tela-dark" 2>/dev/null || true
   success "Flatpak overrides configured!"
-}
-
-# ==============================================================================
-# Optional: Tela Icon Theme
-# ==============================================================================
-install_tela_icons() {
-  if [[ -d "${ICONS_DIR}/Tela-dark" ]]; then
-    success "Tela icon theme is already installed in '${ICONS_DIR}/Tela-dark'."
-    return
-  fi
-
-  info "Cloning and installing Tela icon theme..."
-  local tmp_icons="/tmp/tela-icon-theme-installer"
-  rm -rf "${tmp_icons}"
-  if git clone --depth 1 https://github.com/vinceliuice/Tela-icon-theme.git "${tmp_icons}"; then
-    bash "${tmp_icons}/install.sh" -d "${ICONS_DIR}" -a
-    rm -rf "${tmp_icons}"
-    success "Tela icon theme installed successfully!"
-  else
-    warn "Failed to clone Tela icon theme repository. You can install it manually from https://github.com/vinceliuice/Tela-icon-theme."
-  fi
 }
 
 # ==============================================================================
@@ -435,7 +527,7 @@ install_tela_icons() {
 # ==============================================================================
 echo -e "${C_PURPLE}${C_BOLD}"
 echo "╔═══════════════════════════════════════════════════════════════════════╗"
-echo "║                  Layan-Custom Theme Installer                        ║"
+echo "║                  Layan-Custom Complete Setup                          ║"
 echo "╚═══════════════════════════════════════════════════════════════════════╝"
 echo -e "${C_RESET}"
 
@@ -451,34 +543,44 @@ if [[ "$UID" -ne "$ROOT_UID" ]]; then
   [[ ! -e "${HOME}/.icons" ]] && ln -s "${ICONS_DIR}" "${HOME}/.icons" 2>/dev/null || true
 fi
 
-# Install selected theme variants
+# 1. Install selected theme variants
 for color in "${selected_colors[@]}"; do
   for solid in "${selected_solids[@]}"; do
     install_theme_variant "${DEST_DIR}" "${THEME_NAME}" "${color}" "${solid}"
   done
 done
 
-# Install Tela icon theme if requested
-if [[ "$INSTALL_ICONS" == "true" ]]; then
-  install_tela_icons
+# 2. Install Fonts
+if [[ "$INSTALL_FONTS" == "true" ]]; then
+  install_fonts
 fi
 
-# Modern Libadwaita Overrides
+# 3. Install Icons & Cursors
+if [[ "$INSTALL_ICONS" == "true" ]]; then
+  install_icons_and_cursors
+fi
+
+# 4. Install Wallpapers
+if [[ "$INSTALL_WALLPAPERS" == "true" ]]; then
+  install_wallpapers
+fi
+
+# 5. Modern Libadwaita Overrides
 if [[ "$INSTALL_LIBADWAITA" == "true" && "$UID" -ne "$ROOT_UID" ]]; then
   configure_libadwaita
 fi
 
-# Legacy GTK Configs
+# 6. Legacy GTK Configs
 if [[ "$UID" -ne "$ROOT_UID" ]]; then
   configure_legacy_gtk
 fi
 
-# Flatpak Overrides
+# 7. Flatpak Overrides
 if [[ "$APPLY_FLATPAK" == "true" && "$UID" -ne "$ROOT_UID" ]]; then
   configure_flatpak
 fi
 
-# Desktop GSettings
+# 8. Desktop GSettings
 if [[ "$APPLY_GSETTINGS" == "true" && "$UID" -ne "$ROOT_UID" ]]; then
   apply_desktop_settings
 fi
@@ -490,4 +592,4 @@ fi
 
 echo ""
 success "${C_BOLD}Layan-Custom installation completed successfully!${C_RESET}"
-echo -e "${C_CYAN}Enjoy your customized, flush purple Layan desktop experience!${C_RESET}\n"
+echo -e "${C_CYAN}Themes, icons, fonts, wallpaper and settings have been applied!${C_RESET}\n"

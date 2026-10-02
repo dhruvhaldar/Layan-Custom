@@ -2,7 +2,21 @@
 
 A tailored, modernized edition of the **Layan GTK Theme** designed specifically for modern GNOME (GNOME 45 – 50+) and Libadwaita environments.
 
-This repository bundles all theme variants (GTK 2/3/4, GNOME Shell, XFWM4, Plank) along with a suite of custom Libadwaita refinements, bug fixes, and an automated turnkey installer.
+This repository bundles all theme variants (GTK 2/3/4, GNOME Shell, XFWM4, Plank) along with custom Libadwaita refinements, bundled **fonts**, **icons**, **cursors**, **wallpapers**, and a one-click automated turnkey installer.
+
+---
+
+## 📦 What's Included in this Repository
+
+| Component | Path | Description |
+| :--- | :--- | :--- |
+| **GTK Themes** | `src/` | Layan, Layan-Dark, Layan-Light, Solid variants, GNOME Shell, XFWM4, Plank |
+| **Libadwaita Overrides** | `src/libadwaita/` | Clean circular controls, purple pill pathbar, flush purple sidebar, fixed progress indicator & opaque popovers |
+| **Fonts** | `fonts/` | **Inter** (Regular, Medium, Display, Variable) + **JetBrains Mono** (NL, Bold, Italic) |
+| **Icons & Cursors** | `icons/` | **Tela-dark** icon theme + **catppuccin-frappe-mauve-cursors** |
+| **Wallpapers** | `wallpapers/` | Dynamic Amber (`amber-d`, `amber-l`) + Layan original dark & light wallpapers |
+| **Installer** | `install.sh` | One-shot bash script configuring themes, fonts, icons, wallpapers, GSettings & Flatpak |
+| **Uninstaller** | `uninstall.sh` | Cleanly removes installed components and restores GNOME defaults |
 
 ---
 
@@ -30,16 +44,26 @@ This repository bundles all theme variants (GTK 2/3/4, GNOME Shell, XFWM4, Plank
 - **Aligned Margins**: Aligned bottom toolbar padding (`4px 8px 8px 8px`) to match the exact $8\text{px}$ margins of the sidebar items above it.
 - **Polished Pill Button**: Rounded $10\text{px}$ button style with balanced spacing between the progress spinner and status text.
 
-### 6. Opaque File Operations Popover
+### 6. Solid Opaque Operations Popover
 - Completely eliminates the translucent popover background (`rgba(60, 60, 70, 0.95)` in upstream) that caused desktop and terminal text to bleed through.
 - Solid `#2b2b35` dark card with subtle drop shadow and refined borders.
 - Polished $6\text{px}$ gradient progress bar and circular cancel (`X`) button.
 
 ### 7. Curved Window Corner Leak Fix
-- Optimizes Blur My Shell configuration (`applications blur false`) to prevent square wallpaper artifacts from leaking past curved window corners.
+- Automatically disables application window blur in Blur My Shell to prevent square wallpaper artifacts from leaking past curved window corners.
 
-### 8. Flatpak & Legacy GTK Compatibility
-- Automated overrides for Flatpak applications so sandboxed apps inherit `Layan-Dark` and `Tela-dark` icons out of the box.
+### 8. Typography, Icons & Wallpaper Setup
+- Automatically installs and configures:
+  - **Interface Font**: `Inter Display 11`
+  - **Document Font**: `Inter 11`
+  - **Monospace Font**: `JetBrains Mono 12`
+  - **Titlebar Font**: `Inter Display Bold 11`
+  - **Icon Theme**: `Tela-dark`
+  - **Cursor Theme**: `catppuccin-frappe-mauve-cursors` (size 36)
+  - **Wallpaper**: High-definition dynamic Amber / Layan backgrounds
+
+### 9. Flatpak & Legacy GTK Compatibility
+- Automated overrides for Flatpak applications so sandboxed apps inherit `Layan-Dark`, fonts, and `Tela-dark` icons out of the box.
 - Synchronized `~/.config/gtk-3.0/settings.ini` and `~/.gtkrc-2.0` configurations.
 
 ---
@@ -56,11 +80,14 @@ cd Layan-Custom
 
 The script automatically:
 1. Installs theme files to `~/.local/share/themes/`.
-2. Generates and links the custom Libadwaita stylesheet to `~/.config/gtk-4.0/gtk.css` and `gtk-dark.css`.
-3. Configures GTK 2.0 and GTK 3.0 configuration files.
-4. Applies GNOME GSettings (GTK theme, prefer-dark, button layout `:minimize,maximize,close`).
-5. Configures Flatpak global theme overrides (if flatpak is present).
-6. Gracefully reloads Nautilus to apply changes immediately.
+2. Installs bundled fonts to `~/.local/share/fonts/` and refreshes `fc-cache`.
+3. Installs bundled icons and cursor themes to `~/.local/share/icons/`.
+4. Installs bundled wallpapers to `~/.local/share/backgrounds/`.
+5. Deploys custom Libadwaita stylesheets to `~/.config/gtk-4.0/gtk.css` and `gtk-dark.css`.
+6. Configures GTK 2.0 and GTK 3.0 configuration files.
+7. Applies GNOME GSettings (GTK theme, prefer-dark, button layout `:minimize,maximize,close`, fonts, icons, cursor, wallpaper).
+8. Configures Flatpak global theme and font overrides.
+9. Gracefully reloads Nautilus to apply changes immediately.
 
 ---
 
@@ -77,9 +104,11 @@ The script automatically:
 | `-c, --color [variants]` | Variants to install (`standard`, `dark`, `light`) | All variants |
 | `-s, --solid [variants]` | Window solid style (`standard`, `solid`) | All variants |
 | `-l, --libadwaita` | Install modern Libadwaita overrides to `~/.config/gtk-4.0` | Enabled |
-| `-g, --gsettings` | Automatically apply GNOME desktop settings | Enabled |
-| `-f, --flatpak` | Configure Flatpak global theme overrides | Enabled |
-| `-i, --icons` | Clone and install Tela icon theme if missing | Optional |
+| `--no-fonts` | Skip installing bundled fonts | Disabled |
+| `--no-icons` | Skip installing bundled icons and cursors | Disabled |
+| `--no-wallpapers` | Skip installing bundled wallpapers | Disabled |
+| `--no-gsettings` | Skip applying GNOME desktop settings | Disabled |
+| `--no-flatpak` | Skip configuring Flatpak theme overrides | Disabled |
 | `-u, --uninstall` | Cleanly uninstall themes and restore GNOME defaults | - |
 | `-h, --help` | Display help message | - |
 
@@ -89,22 +118,15 @@ The script automatically:
   ./install.sh -c dark
   ```
 
-- **Install to system-wide themes (requires sudo)**:
+- **Skip font installation**:
   ```bash
-  sudo ./install.sh -d /usr/share/themes --no-gsettings
+  ./install.sh --no-fonts
   ```
 
 - **Uninstall**:
   ```bash
   ./uninstall.sh
   ```
-
----
-
-## 🎨 Recommended Companion Themes
-
-- **Icons**: [Tela Icon Theme](https://github.com/vinceliuice/Tela-icon-theme) (`Tela-dark`)
-- **Shell Theme Extension**: `User Themes` (GNOME Shell extension)
 
 ---
 
