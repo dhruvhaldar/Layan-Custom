@@ -1,0 +1,345 @@
+@import url("@THEME_DIR@/gtk-4.0/gtk.css");
+
+/* === Libadwaita Variables === */
+:root {
+  --sidebar-bg-color: #5857f6;
+  --sidebar-fg-color: #ffffff;
+  --sidebar-backdrop-color: #4f51f8;
+  --sidebar-border-color: rgba(0, 0, 0, 0.2);
+  --sidebar-shade-color: rgba(0, 0, 0, 0.2);
+  --accent-color: #5657f5;
+  --accent-bg-color: #5657f5;
+  --accent-fg-color: #ffffff;
+  --view-bg-color: #31313a;
+  --view-fg-color: #ffffff;
+  --window-bg-color: #31313a;
+  --window-fg-color: #ffffff;
+}
+
+/* === 1. Circular Window Control Buttons === */
+headerbar windowcontrols {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+headerbar windowcontrols > button,
+headerbar windowcontrols > button:not(.suggested-action):not(.destructive-action),
+headerbar windowcontrols > button.close,
+headerbar windowcontrols > button.minimize,
+headerbar windowcontrols > button.maximize {
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  min-width: 20px;
+}
+
+headerbar windowcontrols > button > image {
+  min-width: 13px;
+  min-height: 13px;
+  padding: 0;
+  margin: 0 3px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.28);
+  color: transparent;
+  box-shadow: none;
+}
+
+headerbar windowcontrols > button.close:hover > image {
+  background-color: #EF5350;
+}
+headerbar windowcontrols > button.minimize:hover > image {
+  background-color: #FFB74D;
+}
+headerbar windowcontrols > button.maximize:hover > image {
+  background-color: #81C784;
+}
+
+/* === 2. Modern Nautilus Pathbar: Signature Layan Purple Pill === */
+.nautilus-window .nautilus-pathbar,
+.nautilus-window #path_bar {
+  border-radius: 9999px;
+  padding: 1px 6px;
+  background-image: linear-gradient(180deg, #6a67f4 0%, #4e50f9 100%);
+  background-size: auto auto;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.nautilus-window .nautilus-pathbar button,
+.nautilus-window #path_bar button {
+  border-radius: 9999px;
+  margin: 0;
+  padding: 3px 8px;
+  color: #FFFFFF;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.nautilus-window .nautilus-pathbar button:hover,
+.nautilus-window #path_bar button:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+}
+
+/* === 3. Content Pane: Dark Background === */
+.content-pane,
+.content-pane toolbarview,
+.content-pane scrolledwindow,
+.content-pane viewport,
+.content-pane listview,
+.content-pane gridview,
+.content-pane .view,
+.content-pane columnview,
+.nautilus-window .nautilus-grid-view,
+.nautilus-window .nautilus-list-view {
+  background-color: #31313a;
+  background-image: none;
+  color: #ffffff;
+}
+
+/* === 4. Full Flush Purple Sidebar throughout === */
+.sidebar-pane,
+#NautilusFileChooser .sidebar-pane,
+.nautilus-window .sidebar-pane,
+cc-panel-list {
+  background-color: #5857f6;
+  background-image: linear-gradient(180deg, #6a67f4 0%, #4e50f9 100%);
+  background-size: 100% 100%;
+  color: #FFFFFF;
+  border-top-left-radius: 13px;
+  border-bottom-left-radius: 13px;
+}
+
+.sidebar-pane headerbar,
+#NautilusFileChooser .sidebar-pane headerbar,
+.nautilus-window .sidebar-pane headerbar {
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  border: none;
+  border-top-left-radius: 13px;
+  border-top-right-radius: 0;
+  color: #FFFFFF;
+}
+
+.sidebar-pane headerbar label,
+.sidebar-pane headerbar .title,
+.sidebar-pane headerbar button {
+  color: #FFFFFF;
+  background-color: transparent;
+}
+
+.sidebar-pane headerbar button:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+}
+
+/* All inner sidebar elements transparent so single background shows seamlessly */
+.sidebar-pane toolbarview,
+.sidebar-pane toolbarview > .top-bar,
+.sidebar-pane toolbarview > .bottom-bar,
+.sidebar-pane toolbarview > .bottom-bar.raised,
+.sidebar-pane toolbarview > .bottom-bar.border,
+.sidebar-pane .bottom-bar,
+.sidebar-pane scrolledwindow,
+.sidebar-pane viewport,
+.sidebar-pane list,
+.sidebar-pane listview,
+.sidebar-pane .navigation-sidebar,
+.sidebar-pane placessidebar,
+.sidebar-pane windowhandle,
+.sidebar-pane box,
+.sidebar-pane scrolledwindow undershoot,
+.sidebar-pane scrolledwindow undershoot.top,
+.sidebar-pane scrolledwindow undershoot.bottom,
+.sidebar-pane toolbarview.undershoot-bottom scrolledwindow > undershoot.bottom,
+.sidebar-pane toolbarview.undershoot-top scrolledwindow > undershoot.top {
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  border: none;
+}
+
+/* Sidebar Row Items: White text, white icons, rounded selection pills */
+.sidebar-pane list.navigation-sidebar > row,
+.sidebar-pane listview.navigation-sidebar > row,
+.sidebar-pane listview > row,
+.sidebar-pane list > row {
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  margin: 1px 8px;
+  padding: 5px 8px;
+  background-color: transparent;
+}
+
+.sidebar-pane list.navigation-sidebar > row:hover,
+.sidebar-pane listview.navigation-sidebar > row:hover,
+.sidebar-pane listview > row:hover,
+.sidebar-pane list > row:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+}
+
+.sidebar-pane list.navigation-sidebar > row:selected,
+.sidebar-pane listview.navigation-sidebar > row:selected,
+.sidebar-pane listview > row:selected,
+.sidebar-pane list > row:selected {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.sidebar-pane list.navigation-sidebar > row label,
+.sidebar-pane listview.navigation-sidebar > row label,
+.sidebar-pane listview > row label {
+  color: inherit;
+}
+
+.sidebar-pane list.navigation-sidebar > row image,
+.sidebar-pane listview.navigation-sidebar > row image,
+.sidebar-pane listview > row image {
+  color: inherit;
+}
+
+.sidebar-pane separator,
+.sidebar-pane separator.horizontal {
+  background-color: rgba(255, 255, 255, 0.15);
+  margin: 6px 12px;
+}
+
+/* === 5. Nautilus Progress Indicator & Sidebar Bottom Bar Alignment === */
+.sidebar-pane .toolbar {
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  border: none;
+  padding: 4px 8px 8px 8px;
+}
+
+.sidebar-pane .nautilus-progress-indicator {
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-pane .nautilus-progress-indicator menubutton {
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-pane .nautilus-progress-indicator menubutton > button {
+  min-height: 36px;
+  border-radius: 10px;
+  padding: 6px 12px;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  background-color: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.sidebar-pane .nautilus-progress-indicator menubutton > button:hover {
+  background-color: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+.sidebar-pane .nautilus-progress-indicator menubutton > button:checked,
+.sidebar-pane .nautilus-progress-indicator menubutton > button:active {
+  background-color: rgba(255, 255, 255, 0.32);
+  color: #ffffff;
+}
+
+.sidebar-pane .nautilus-progress-indicator menubutton > button listview {
+  background: transparent;
+  border-spacing: 10px;
+  color: #ffffff;
+}
+
+.sidebar-pane .nautilus-progress-indicator menubutton > button label,
+.sidebar-pane .nautilus-progress-indicator menubutton > button image {
+  color: #ffffff;
+}
+
+/* === 6. Popovers & File Operations Popover (Opaque background, clean spacing) === */
+popover > contents,
+popover.background > contents,
+popover#operations_popover > contents,
+#operations_popover > contents {
+  background-color: #2b2b35;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  padding: 8px;
+}
+
+popover > arrow,
+popover.background > arrow,
+#operations_popover > arrow {
+  background-color: #2b2b35;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#operations_popover .operations-list {
+  background: transparent;
+  padding: 4px;
+}
+
+#operations_popover .operations-list > row {
+  background: transparent;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+#operations_popover .operations-list > row:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+#operations_popover label#status {
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+#operations_popover progressbar {
+  min-height: 6px;
+  margin-top: 3px;
+  margin-bottom: 6px;
+}
+
+#operations_popover progressbar > trough {
+  min-height: 6px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+#operations_popover progressbar > trough > progress {
+  min-height: 6px;
+  border-radius: 9999px;
+  background-color: #5657f5;
+  background-image: linear-gradient(90deg, #6a67f4, #8b5cf6);
+}
+
+#operations_popover label#details,
+#operations_popover label.dim-label {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.9em;
+}
+
+#operations_popover button.circular {
+  border-radius: 9999px;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0;
+  margin-left: 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: none;
+  box-shadow: none;
+}
+
+#operations_popover button.circular:hover {
+  background-color: #ef5350;
+  color: #ffffff;
+}

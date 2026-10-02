@@ -1,0 +1,1685 @@
+/************
+ * Nautilus *
+ ************/
+
+$nautilus_bg_color: if($titlebar =='dark' and $variant =='light', $base_color, $titlebar_bg_color);
+$header-icon: if($titlebar =='dark' and $variant =='light',
+    -gtk-scaled(url('assets/header-icon-alt.png'), url('assets/header-icon-alt@2.png')),
+    -gtk-scaled(url('assets/header-icon.png'), url('assets/header-icon@2.png')));
+
+#NautilusFileChooser,
+.nautilus-window {
+  .sidebar-pane {
+    background-image: $theme_image;
+    background-size: 48px auto;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    background-color: if($solid =='false', rgba($nautilus_bg_color, 0.97), $nautilus_bg_color);
+
+    headerbar {
+      background-color: transparent;
+      background-image: $header-icon;
+      background-size: 48px auto;
+      background-position: left bottom;
+      background-repeat: no-repeat;
+      padding-left: 54px;
+      box-shadow: inset 0 1px $titlebar_highlight_color;
+      border: none;
+
+      // > revealer > button { @extend %circular_button; } // Make operations button circular
+    }
+  }
+
+  .background {
+    .top-bar headerbar {
+      box-shadow: none;
+    }
+
+    list.navigation-sidebar {
+      background-color: transparent;
+
+      > row {
+        border-radius: 0;
+      }
+    }
+  }
+
+  .nautilus-grid-view {
+    &, gridview.view {
+      background-color: transparent;
+    }
+
+    gridview.view {
+      padding: 3px 0;
+    }
+
+    child.activatable {
+      padding: 0;
+
+      #NautilusViewCell {
+        padding: $container_padding;
+
+        .icon-ui-labels-box {
+          margin: 0 0 $container_padding;
+          border-spacing: 0;
+        }
+
+        .dim-label {
+          border-spacing: 0;
+        }
+      }
+    }
+  }
+
+  .nautilus-list-view {
+    margin: $container_padding;
+    padding: 0;
+    border-spacing: 0;
+
+    &, .view {
+      background-color: transparent;
+    }
+
+    listview.view {
+      padding: 0;
+      margin: 0;
+      border-spacing: $container_padding / 2;
+
+      > row.activatable {
+        padding: 0;
+        margin: 0;
+        border-radius: $buttons_radius;
+
+        > cell {
+          padding: 0;
+
+          > widget#NautilusViewCell {
+            padding: $container_padding / 2 $container_padding * 1.5;
+          }
+        }
+
+        &:nth-child(odd):not(:disabled) {
+          background-image: image(gtkalpha(currentColor, 0.03));
+        }
+      }
+    }
+  }
+
+  placesview {
+    label {
+      color: $secondary_fg_color;
+
+      &:disabled {
+        color: $disabled_secondary_fg_color;
+      }
+    }
+
+    list, actionbar, actionbar > revealer > box {
+      background-color: transparent;
+    }
+  }
+
+  flap.unfolded > placessidebar,
+  .sidebar-pane > toolbarview > placessidebar {
+    background: none;
+    margin-right: 6px;
+
+    list.navigation-sidebar {
+      background-color: transparent;
+      padding: 0;
+
+      > row {
+        padding-left: $container_padding;
+
+        .sidebar-revealer {
+          padding: 0 0 0 $container_padding * 2;
+        }
+
+        &, &:hover, &:selected, &:active, &:selected:hover, &:selected:active, &:focus {
+          transition: none;
+          animation: none;
+          background-color: transparent;
+          box-shadow: none;
+        }
+
+        &:selected button.sidebar-button {
+          @extend %selected_sidebar_button;
+        }
+
+        image.sidebar-icon {
+          color: $inverse_secondary_fg_color;
+          margin-right: 6px;
+        }
+
+        label.sidebar-label {
+          padding-left: 18px;
+          color: $secondary_fg_color;
+          border-radius: 0 $buttons_radius $buttons_radius 0;
+        }
+
+        &:hover {
+          label.sidebar-label {
+            background-color: rgba($divider_color, 0.03);
+          }
+        }
+
+        &:backdrop {
+          opacity: 0.85;
+        }
+
+        &:selected {
+          // font-weight: bold;
+
+          label.sidebar-label {
+            color: if($variant =='light', $primary_color, lighten($primary_color, 15%));
+            background-color: rgba($divider_color, 0.06);
+          }
+
+          image.sidebar-icon {
+            color: $inverse_fg_color;
+          }
+        }
+      }
+    }
+
+    separator {
+      background-color: transparent;
+    }
+  }
+
+  #NautilusPathBar {
+    border-radius: $circular_radius;
+    padding: 0;
+    background-image: $theme_image;
+    background-size: auto auto;
+    background-position: center center;
+    background-repeat: no-repeat;
+    box-shadow: if($variant =='light', $header_shadow_light, $header_shadow_dark);
+
+    .dim-label {
+      color: $inverse_secondary_fg_color;
+    }
+
+    button:not(.suggested-action):not(.destructive-action) {
+      margin: 0;
+      color: $inverse_secondary_fg_color;
+
+      &:hover {
+        background-color: $inverse_divider_color;
+        box-shadow: none;
+      }
+
+      &:active, &:checked {
+        background-color: $inverse_track_color;
+        box-shadow: none;
+        background-image: none;
+      }
+
+      &:hover, &:active, &:checked {
+        color: $inverse_fg_color;
+      }
+
+      &.current-dir {
+        color: $inverse_fg_color;
+
+        &:hover, &:active {
+          background: none;
+          box-shadow: none;
+        }
+      }
+    }
+
+    > menubutton {
+      margin: 0;
+
+      > button {
+        border-radius: $circular_radius;
+        margin: 0;
+
+        &:checked {
+          background-color: $inverse_track_color;
+          box-shadow: none;
+          background-image: none;
+        }
+      }
+    }
+  }
+
+  #NautilusViewCell {
+    clamp box {
+      margin: 0;
+      border-spacing: 0;
+    }
+  }
+
+  #NautilusQueryEditor {
+    // search entry
+    border-radius: $circular_radius;
+    color: $titlebar_secondary_fg_color;
+    padding: 0 ($medium_size - $menuitem_size) / 2 0 ($container_padding + 2px);
+
+    &:focus-within {
+      color: $titlebar_fg_color;
+    }
+
+    &:disabled {
+      color: $titlebar_disabled_secondary_fg_color;
+    }
+
+    > menubutton {
+      margin: 0;
+
+      > button.image-button {
+        min-width: $menuitem_size;
+        min-height: $menuitem_size;
+        margin: ($medium_size - $menuitem_size) / 2 0;
+        padding: 0;
+        @extend %flat_button;
+      }
+    }
+
+    > text {
+      margin: 0;
+    }
+  }
+
+  #NautilusQueryEditorTag {
+    border-radius: $circular_radius;
+
+    > button {
+      margin: $container_padding / 2;
+      padding: 0;
+      min-height: $small_size - 2px;
+      min-width: $small_size - 2px;
+    }
+  }
+
+  label.search-information {
+    margin: 2px;
+    border-radius: 3px;
+  }
+
+  flap > separator {
+    // Ensure paned separator rendering. See issue #84 for details.
+    min-width: 20px;
+    color: transparent;
+    background-image: url("assets/scalable/side-paned.svg");
+    background-size: 20px 750px;
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-color: transparent;
+    border: none;
+  }
+}
+
+// Floating status bar
+.floating-bar {
+  min-height: 32px;
+  padding: 0;
+  margin: 3px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: $border_color;
+  border-radius: $buttons_radius;
+  color: $fg_color;
+  background-color: $base_color;
+  background-clip: $extra_background_clip;
+  transition: $longer_transition, border-width 0;
+  box-shadow: none;
+
+  button {
+    margin: (32px - $small_size) / 2;
+
+    @extend %small_button;
+  }
+}
+
+//
+// Gnome Software
+//
+
+.details-page {
+  margin: $container_padding * 4 0px;
+}
+
+.installed-overlay-box {
+  font-size: smaller;
+  background-color: $primary_color;
+  border-radius: 0;
+  color: $inverse_fg_color;
+  text-shadow: 0 1px 0 rgba(black, 0.2);
+}
+
+screenshot-carousel box.frame {
+  border-width: 1px 0;
+  border-radius: 0;
+}
+
+screenshot-carousel button,
+.featured-carousel button {
+  margin: $container_padding * 2;
+}
+
+.screenshot-image-main .image1,
+.screenshot-image-main .image2 {
+  margin-top: $container_padding;
+  margin-bottom: $container_padding * 2;
+  margin-left: $container_padding;
+  margin-right: $container_padding;
+}
+
+.app-tile-label {
+  font-size: 105%;
+}
+
+.review-textbox {
+  padding: $container_padding;
+}
+
+.origin-rounded-box {
+  background-color: $divider_color;
+  border-radius: $circular_radius;
+  padding: $container_padding - 2px;
+}
+
+.origin-beta {
+  color: $warning_color;
+}
+
+.origin-button > button {
+  padding: $container_padding / 2 $container_padding * 1.5;
+}
+
+flowboxchild {
+  &.card {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    background: none;
+  }
+}
+
+button.card.category-tile {
+  padding: $container_padding * 3.5;
+  border: none;
+  border-radius: $buttons_radius;
+  min-width: 140px;
+  font-weight: 900;
+  font-size: larger;
+  box-shadow: $shadow_2;
+
+  &.category-tile-iconless {
+    padding: $container_padding * 1.5 $container_padding * 2.5;
+    min-width: 130px;
+    font-size: 105%;
+    font-weight: normal;
+    box-shadow: none;
+  }
+
+  // Styling for specific category buttons.
+  &.category-create {
+    background: linear-gradient(180deg, #ce8cd7 0%, #2861c6 100%);
+    color: white;
+
+    &:hover {
+      background: linear-gradient(180deg, shade(#ce8cd7, 1.07) 0%, shade(#2861c6, 1.1) 100%);
+      color: white;
+    }
+
+    &:active {
+      background: linear-gradient(180deg, shade(#ce8cd7, .95) 0%, shade(#2861c6, .95) 100%);
+      color: white;
+    }
+  }
+
+  &.category-develop {
+    background: #5e5c64;
+    color: white;
+
+    &:hover {
+      background: shade(#5e5c64, 1.2);
+      color: white;
+    }
+
+    &:active {
+      background-color: shade(#5e5c64, .95);
+      color: white;
+    }
+  }
+
+  &.category-learn {
+    background: linear-gradient(180deg, #2ec27e 30%, #27a66c 100%);
+    color: white;
+
+    &:hover {
+      background: linear-gradient(180deg, shade(#2ec27e, 1.06) 30%, shade(#27a66c, 1.06) 100%);
+      color: white;
+    }
+
+    &:active {
+      background: linear-gradient(180deg, shade(#2ec27e, .95) 30%, shade(#27a66c, .95) 100%);
+      color: white;
+    }
+  }
+
+  &.category-play {
+    background: linear-gradient(75deg, #f9e2a7 0%, #eb5ec3 50%, #6d53e0 100%);
+    color: #393484;
+
+    &:hover {
+      background: linear-gradient(75deg, shade(#f9e2a7, 1.07) 0%, shade(#eb5ec3, 1.07) 50%, shade(#6d53e0, 1.07) 100%);
+      color: #393484;
+    }
+
+    &:active {
+      background: linear-gradient(75deg, shade(#f9e2a7, .97) 0%, shade(#eb5ec3, .95) 50%, shade(#6d53e0, 1.07) 100%);
+      color: #393484;
+    }
+  }
+
+  &.category-socialize {
+    background: linear-gradient(90deg, #ef4e9b 0%, #f77466 100%);
+    color: $secondary_fg_color;
+
+    &:hover {
+      background: linear-gradient(90deg, shade(#ef4e9b, 1.08) 0%, shade(#f77466, 1.08) 100%);
+    }
+
+    &:active {
+      background: linear-gradient(90deg, shade(#ef4e9b, .95) 0%, shade(#f77466, .95) 100%);
+    }
+  }
+
+  &.category-work {
+    padding: 1px;
+    /* FIXME: work around https://gitlab.gnome.org/GNOME/gtk/-/issues/4324 */
+    color: #1c71d8;
+    background-color: #fdf8d7;
+    background-image: linear-gradient($border_color 1px, transparent 1px),
+      linear-gradient(90deg, $border_color 1px, transparent 1px);
+    background-size: 10px 10px, 10px 10px;
+    background-position: -1px -4px, center -1px;
+
+    &:hover {
+      color: #1c71d8;
+      background-color: lighten(#fdf8d7, 5%);
+      background-image: linear-gradient($border_color 1px, transparent 1px),
+        linear-gradient(90deg, $border_color 1px, transparent 1px);
+    }
+
+    &:active {
+      color: #1c71d8;
+      background-color: darken(#fdf8d7, 5%);
+      background-image: linear-gradient($border_color 1px, transparent 1px),
+        linear-gradient(90deg, $border_color 1px, transparent 1px);
+    }
+  }
+}
+
+clamp.medium .category-tile:not(.category-tile-iconless),
+clamp.large .category-tile:not(.category-tile-iconless) {
+  font-size: larger;
+}
+
+// The rest of the featured-tile CSS is loaded at runtime in gs-feature-tile.c
+.featured-tile {
+  padding: 0;
+  box-shadow: none;
+  color: $fg_color;
+
+  label.title-1 {
+    margin-top: $container_padding;
+    margin-bottom: $container_padding;
+  }
+
+  &.narrow label.title-1 {
+    font-size: 16pt;
+  }
+}
+
+.application-details-infobar {
+  &, &.info {
+    background-color: $row_fill_color;
+    color: $fg_color;
+    border: 1px solid $border_color;
+  }
+
+  &.warning {
+    background-color: $warning_color;
+    color: $inverse_fg_color;
+    border: 1px solid $inverse_divider_color;
+  }
+}
+
+@keyframes install-progress-unknown-move {
+  0% {
+    background-position: 0%;
+  }
+
+  50% {
+    background-position: 100%;
+  }
+
+  100% {
+    background-position: 0%;
+  }
+}
+
+.application-details-description .button {
+  padding-left: $container_padding * 4;
+  padding-right: $container_padding * 4;
+}
+
+.install-progress {
+  background-image: linear-gradient(to top, $primary_color 2px, gtkalpha($primary_color, 0) 2px);
+  background-repeat: no-repeat;
+  background-position: 0 bottom;
+  background-size: 0;
+  transition: none;
+}
+
+.install-progress:dir(rtl) {
+  background-position: 100% bottom;
+}
+
+.review-row > * {
+  margin: $container_padding * 2;
+}
+
+.review-row button {
+  font-size: smaller;
+}
+
+.review-row .vote-buttons button {
+  margin-right: -1px;
+}
+
+// this is the separator between yes and no vote buttons, gtk+ 3.20 only
+.review-row .vote-buttons button:not(:first-child) {
+  border-image: linear-gradient(to top, $border_color, $border_color) 0 0 0 1 / 5px 0 5px 1px;
+}
+
+.review-row .vote-buttons button:hover,
+.review-row .vote-buttons button:active,
+.review-row .vote-buttons button:hover + button,
+.review-row .vote-buttons button:active + button {
+  border-image: none;
+}
+
+review-bar {
+  color: $disabled_fg_color;
+  background-image: none;
+  background-color: $track_color;
+}
+
+.review-histogram star-image {
+  color: $disabled_fg_color;
+}
+
+.version-arrow-label {
+  font-size: x-small;
+}
+
+.overview-more-button {
+  font-size: smaller;
+  padding: 0 $container_padding * 2 + 4px;
+}
+
+.app-row-origin-text {
+  font-size: smaller;
+}
+
+.app-listbox-header {
+  padding: $container_padding;
+  border-bottom: 1px solid $border_color;
+}
+
+.image-list {
+  background-color: transparent;
+}
+
+box.star {
+  background-color: transparent;
+  background-image: none;
+}
+
+button.star {
+  outline-offset: 0;
+  background-color: transparent;
+  background-image: none;
+  border-image: none;
+  border-radius: 0;
+  border-width: 0;
+  padding: 0;
+  box-shadow: none;
+  outline-offset: -1px;
+}
+
+star-image {
+  color: $yellow_700;
+}
+
+.dimmer-label {
+  opacity: 0.25;
+}
+
+.update-failed-details {
+  font-family: Monospace;
+  font-size: smaller;
+  padding: $container_padding * 2 + 4px;
+}
+
+.upgrade-banner {
+  padding: 0px;
+  border-radius: $buttons_radius;
+  border: none;
+}
+
+.upgrade-banner-background {
+  background: linear-gradient(to bottom, $green_500, $blue_500);
+  color: white;
+}
+
+.upgrade-buttons #button_upgrades_install {
+  padding-left: $container_padding * 2 + 4px;
+  padding-right: $container_padding * 2 + 4px;
+}
+
+banner > revealer > widget {
+  background-color: $primary_color;
+  padding: $container_padding;
+
+  button {
+    @extend %flat_button;
+    @extend %button_selected_flat;
+  }
+}
+
+scrolledwindow.list-page > viewport > clamp > box {
+  margin: $container_padding * 4 $container_padding * 2;
+  border-spacing: $container_padding * 4;
+}
+
+.update-preferences preferencesgroup > box > box {
+  margin-top: $container_padding * 3;
+}
+
+.section > label:not(:first-child) {
+  margin-top: $container_padding;
+}
+
+.section > box:not(:first-child) {
+  margin-top: $container_padding * 2;
+}
+
+clamp.status-page {
+  margin: $container_padding * 6 $container_padding * 2;
+}
+
+clamp.status-page .iconbox {
+  min-height: 128px;
+  min-width: 128px;
+}
+
+clamp.status-page .icon {
+  color: $disabled_fg_color;
+  min-height: 32px;
+  min-width: 32px;
+}
+
+clamp.status-page .icon:not(:last-child) {
+  margin-bottom: $container_padding * 6;
+}
+
+clamp.status-page .title:not(:last-child) {
+  margin-bottom: $container_padding * 2;
+}
+
+app-context-bar {
+  .context-tile {
+    border: 1px solid $border_color;
+    background-color: transparent;
+    border-radius: 0;
+    padding: $container_padding * 4 $container_padding * 2 $container_padding * 3.5 $container_padding * 2;
+    outline-offset: 5px;
+    border-bottom: none;
+    border-right: none;
+
+    &:focus:focus-visible {
+      outline-offset: -1px;
+    }
+  }
+
+  &.horizontal box:first-child .context-tile:first-child,
+  &.vertical .context-tile:first-child {
+    border-left: none;
+  }
+
+  &.horizontal .context-tile,
+  &.vertical box:first-child .context-tile {
+    border-top: none;
+  }
+
+  > box:not(:first-child) > button.flat {
+    border-radius: 0;
+
+    &:last-child {
+      border-radius: 0 $buttons_radius $buttons_radius 0;
+    }
+  }
+
+  > box:first-child > button.flat {
+    border-radius: 0;
+
+    &:first-child {
+      border-radius: $buttons_radius 0 0 $buttons_radius;
+    }
+  }
+
+  > box > button.flat {
+    border-left-color: $border_color;
+  }
+}
+
+carousel.card {
+  border: none;
+  background-color: $row_fill_color;
+}
+
+.context-tile-lozenge {
+  min-height: 28px;
+  min-width: 28px;
+  padding: $container_padding;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: $circular_radius;
+
+  &.large {
+    font-size: 24px;
+    padding: 16px;
+    min-width: 24px;
+    /* 60px minus the left and right padding */
+    min-height: 24px;
+    /* 60px minus the top and bottom padding */
+  }
+
+  &.wide-image image {
+    margin-top: -28px;
+    margin-bottom: -28px;
+  }
+
+  image {
+    -gtk-icon-style: symbolic;
+  }
+
+  &.grey {
+    color: $fg_color;
+    background-color: $divider_color;
+  }
+
+  &.green, &.details-rating-0 {
+    color: darken($success_color, 15%);
+    background-color: rgba($success_color, 0.15);
+  }
+
+  &.blue,
+  &.details-rating-5 {
+    color: $blue_500;
+    background-color: rgba($blue_500, 0.15);
+  }
+
+  &.yellow, &.details-rating-12 {
+    color: darken($warning_color, 15%);
+    background-color: rgba($warning_color, 0.15);
+  }
+
+  &.details-rating-15 {
+    color: $orange_500;
+    background-color: rgba($orange_500, .15);
+  }
+
+  &.red, &.details-rating-18 {
+    color: darken($error_color, 15%);
+    background-color: rgba($error_color, 0.15);
+  }
+}
+
+.eol-red {
+  font-weight: bold;
+  color: $error_color;
+}
+
+window.narrow .app-title {
+  font-size: 16pt;
+}
+
+window.narrow .app-developer {
+  font-size: small;
+}
+
+.install-progress-label {
+  font-size: smaller;
+  font-feature-settings: "tnum";
+}
+
+scrolledwindow.fake-adw-status-page > viewport > box {
+  margin: $container_padding * 6 $container_padding * 2;
+}
+
+scrolledwindow.fake-adw-status-page > viewport > box > clamp:not(:last-child) > box {
+  margin-bottom: $container_padding * 6;
+}
+
+scrolledwindow.fake-adw-status-page > viewport > box > clamp > box > .icon:not(:last-child) {
+  margin-bottom: $container_padding * 6;
+}
+
+scrolledwindow.fake-adw-status-page > viewport > box > clamp > box > .title:not(:last-child) {
+  margin-bottom: $container_padding * 2;
+}
+
+statuspage.icon-dropshadow image.icon {
+  -gtk-icon-shadow: 0 1px 12px rgba(0, 0, 0, 0.05),
+    0 -1px rgba(0, 0, 0, 0.05),
+    1px 0 rgba(0, 0, 0, 0.1),
+    0 1px rgba(0, 0, 0, 0.3),
+    -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+window.info scrollbar.vertical {
+  margin-top: 48px;
+  background: none;
+  box-shadow: none;
+}
+
+window.info scrollbar.vertical trough {
+  margin-top: 0;
+}
+
+// GsAppRow
+row.app > box.header {
+  margin-left: $container_padding * 2;
+  margin-right: $container_padding * 2;
+}
+
+row.app > box.header {
+  border-spacing: $container_padding * 2;
+}
+
+row.app > box.header > image {
+  margin-top: $container_padding * 2;
+  margin-bottom: $container_padding * 2;
+}
+
+row.app label.warning {
+  color: $error_color;
+}
+
+// GtkSpinner
+
+// Ensure the spinner is hidden before the animation is triggered.
+@keyframes pre-delay {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    filter: opacity(0%);
+  }
+}
+
+/* Give a fade-in animation to spinners. */
+spinner.fade-in:checked {
+  animation: pre-delay 0.5s linear 1, fade-in 1s linear 1, spin 1s linear infinite;
+  animation-delay: 0s, 0.5s, 0.5s;
+}
+
+//
+// Gnome Control Center
+//
+
+// leaflet
+window > contents leaflet {
+  background-color: transparent;
+
+  stack.background {
+    background-color: transparent;
+  }
+
+  &.unfolded {
+
+    stack.background leaflet box.vertical:last-child > headerbar,
+    stack.background leaflet + headerbar {
+      border-top-left-radius: 0;
+    }
+
+    > separator + box.vertical > headerbar {
+      border-top-right-radius: 0;
+      border-top-left-radius: $windows_radius;
+    }
+  }
+
+  > box > scrolledwindow > viewport > widget > stack {
+    background-color: $base_color;
+  }
+}
+
+window > widget {
+  leaflet {
+    background-color: transparent;
+
+    stack.background {
+      background-color: transparent;
+    }
+
+    &.unfolded {
+      stack.background > widget > overlay > leaflet > box > headerbar, // Control display header
+
+      stack.background > widget > box > widget > headerbar,
+      > box:not(:last-child) headerbar {
+        // Calendar and Builder right header
+        border-top-left-radius: 0;
+      }
+
+      > separator + box > headerbar {
+        // Calendar and control left header
+        border-top-right-radius: 0;
+      }
+    }
+
+    > box > scrolledwindow > viewport > widget > stack {
+      background-color: $base_color;
+    }
+  }
+}
+
+preferencesgroup button.accent, // GDM Setting
+
+preferencesgroup button.accent-button {
+  min-height: 24px;
+  min-width: 24px;
+  padding: $base_padding / 2;
+  border-radius: $circular_radius;
+  background: var(--accent-bg-color);
+  outline: none;
+  background-clip: content-box;
+  box-shadow: none;
+  border: none;
+
+  &:hover {
+    box-shadow: 0 0 0 3px $divider_color;
+    background: var(--accent-bg-color);
+    background-clip: content-box;
+  }
+
+  &:checked, &:checked:hover {
+    box-shadow: 0 0 0 3px var(--accent-bg-color);
+    background: var(--accent-bg-color);
+    background-clip: content-box;
+  }
+
+  &.blue,
+  &.teal,
+  &.green,
+  &.yellow,
+  &.orange,
+  &.red,
+  &.pink,
+  &.purple,
+  &.slate {
+    --accent-color: oklab(from var(--accent-bg-color) var(--standalone-color-oklab));
+  }
+
+  &.blue {
+    --accent-bg-color: var(--accent-blue);
+  }
+
+  &.teal {
+    --accent-bg-color: var(--accent-teal);
+  }
+
+  &.green {
+    --accent-bg-color: var(--accent-green);
+  }
+
+  &.yellow {
+    --accent-bg-color: var(--accent-yellow);
+  }
+
+  &.orange {
+    --accent-bg-color: var(--accent-orange);
+  }
+
+  &.red {
+    --accent-bg-color: var(--accent-red);
+  }
+
+  &.pink {
+    --accent-bg-color: var(--accent-pink);
+  }
+
+  &.purple {
+    --accent-bg-color: var(--accent-purple);
+  }
+
+  &.slate {
+    --accent-bg-color: var(--accent-slate);
+  }
+}
+
+//
+// Contacts
+//
+
+.contacts-contact-list list.navigation-sidebar {
+  background: none;
+}
+
+window > contents leaflet {
+  &.unfolded {
+    > box.vertical > headerbar {
+      border-top-left-radius: 0;
+    }
+  }
+}
+
+//
+// Calendar
+//
+
+datechooser {
+  padding: $base_padding;
+
+  button {
+    &, &.flat, &.toggle, &.text-button {
+      min-height: 24px;
+      min-width: 24px;
+      padding: $base_padding;
+    }
+
+    &.day.text-button {
+      &:selected {
+        box-shadow: none;
+        background-color: $primary_color;
+        color: $inverse_fg_color;
+      }
+    }
+  }
+}
+
+// labels
+label {
+  &.primary-label, &.month-name, &.secondary-label {
+    font-size: 16pt;
+    font-weight: bold;
+    padding: $base_padding * 2;
+  }
+
+  &.primary-label, &.month-name {
+    color: $primary_color;
+  }
+
+  &.secondary-label {
+    color: $disabled_fg_color;
+  }
+}
+
+calendar-view {
+  font-size: 10pt;
+
+  &:selected {
+    color: $primary_color;
+    font-weight: bold;
+  }
+}
+
+calendar-view.header,
+label.header {
+  font-size: 10pt;
+  font-weight: bold;
+  color: $disabled_fg_color;
+}
+
+calendar-view.current,
+weekgrid.current {
+  background-color: gtkalpha($primary_color, 0.3);
+}
+
+popover.events {
+  background-color: $menu_bg_color;
+  padding: 0;
+
+  box {
+    border-top-left-radius: $buttons_radius;
+    border-top-right-radius: $buttons_radius;
+  }
+
+  list {
+    background-color: $base_color;
+    border-radius: $buttons_radius;
+  }
+
+  scrolledwindow {
+    border-width: 0;
+  }
+
+  button {
+    border-radius: $buttons_radius;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-style: solid none none;
+    box-shadow: none;
+  }
+}
+
+// Event widget
+event {
+  margin: 1px;
+  font-size: 0.9rem;
+
+  widget.content {
+    margin: 4px;
+  }
+
+  &.timed,
+  &:not(.slanted):not(.slanted-start):not(.slanted-end) {
+    border-radius: $buttons_radius;
+  }
+
+  &.timed widget.edge {
+    border-radius: $buttons_radius / 2;
+    min-width: 5px;
+  }
+
+  &.slanted-start,
+  &.slanted-end:dir(rtl) {
+    padding-left: $base_padding * 2 + 4px;
+    border-radius: 0 $buttons_radius / 2 $buttons_radius / 2 0;
+  }
+
+  &.slanted-end,
+  &.slanted-start:dir(rtl) {
+    padding-right: $base_padding * 2 + 4px;
+    border-radius: $buttons_radius / 2 0 0 $buttons_radius / 2;
+  }
+
+  &:not(.timed).color-dark {
+    color: white;
+    outline-color: rgba(0, 0, 0, 0.3);
+  }
+
+  &.timed,
+  &:not(.timed).color-light {
+    color: gtkalpha(black, 0.75);
+    outline-color: rgba(255, 255, 255, 0.5);
+  }
+
+}
+
+// Event Popover
+popover.event-popover,
+popover.event-popover > contents {
+  padding: 0;
+}
+
+.search-viewport {
+  background-color: $base_color;
+}
+
+// calendar popover
+.calendar-list {
+  background-color: transparent;
+
+  > list {
+    border-radius: 4px;
+  }
+}
+
+// defeats the ugly hover effect of the calendar color dot on buttons
+.calendar-color-image {
+  -gtk-icon-filter: none;
+}
+
+// adds a subtle shadow to the calendar color dot when it makes sense
+image.calendar-color-image,
+button:active:not(:backdrop) .calendar-color-image,
+button:checked:not(:backdrop) .calendar-color-image,
+.calendars-list .calendar-color-image:not(:backdrop):not(:disabled),
+.calendar-list .calendar-color-image:not(:backdrop):not(:disabled),
+.sources-button:not(:backdrop):not(:disabled) .calendar-color-image {
+  -gtk-icon-shadow: 0 1px gtkalpha(black, 0.1);
+}
+
+// Date chooser
+
+// month/year controls
+datechooser {
+  navigator {
+    // add some space between the two controls
+    margin-right: $base_padding;
+    margin-left: $base_padding;
+    margin-bottom: $base_padding;
+  }
+
+  navigator {
+    label {
+      font-weight: bold;
+    }
+
+    button, button.popup, button.image-button {
+      min-height: $medium-size;
+      min-width: $medium-size;
+      padding: 0;
+    }
+  }
+
+  // day names and week numbers
+  .weeknum, .weekday {
+    color: $disabled_fg_color;
+    font-size: smaller;
+  }
+
+  // days
+  button.day, button.day.text-button {
+    font-size: 10pt;
+    font-weight: normal;
+    margin: $base_padding / 2;
+    padding: 0;
+    min-height: $medium-size;
+    min-width: $medium-size;
+    transition: none;
+
+    dot {
+      background-color: $fg_color;
+      border-radius: 50%;
+      min-height: $base_padding / 2;
+      min-width: $base_padding / 2;
+    }
+
+    &:selected, &.today:selected {
+      background-color: $primary_color;
+      color: $inverse_fg_color;
+      font-weight: bold;
+
+      dot {
+        background-color: $inverse_fg_color;
+      }
+    }
+
+    &.today {
+      color: $primary_color;
+
+      dot {
+        background-color: $primary_color;
+      }
+    }
+
+    &.other-month {
+
+      &:not(:hover),
+      &:backdrop {
+        color: gtkalpha(currentColor, 0.1);
+
+        dot {
+          background-color: gtkalpha(currentColor, 0.1);
+        }
+      }
+
+      &:hover:not(:backdrop) {
+        color: $disabled_fg_color;
+
+        dot {
+          background-color: $disabled_fg_color;
+        }
+      }
+    }
+  }
+}
+
+// Week View CSS
+.week-header {
+  padding: 0;
+
+  & > box:first-child {
+    border-bottom: 1px solid $border_color;
+  }
+
+  .week-number {
+    font-size: 16pt;
+    font-weight: bold;
+    padding: $base_padding * 2 $base_padding * 2 $base_padding * 3 $base_padding * 2;
+    color: $track_color;
+  }
+
+  &.week-temperature {
+    font-size: 10pt;
+    font-weight: bold;
+    color: $disabled_fg_color;
+  }
+
+  &.lines {
+    color: $border_color;
+  }
+}
+
+weekhourbar > label {
+  font-size: 10pt;
+  padding: 4px $base_padding;
+}
+
+.week-view .lines {
+  color: $border_color;
+}
+
+weekgrid > widget.now-strip {
+  background-color: gtkalpha($primary_color, 0.8);
+  margin: 0 0 0 1px;
+  min-height: 3px;
+}
+
+weekgrid,
+.week-header {
+  &:selected, &.dnd {
+    background-color: gtkalpha($primary_color, 0.25);
+  }
+}
+
+// Month cell
+monthcell {
+  border: solid 1px $border_color;
+  border-width: 1px 0 0 1px;
+  background-color: transparent;
+  transition: background-color 200ms;
+
+  &:hover:not(.out-of-month):not(.today) {
+    background-color: $alt_base_color;
+    transition: background-color 200ms;
+    color: $fg_color;
+  }
+
+  &:selected {
+    background-color: gtkalpha($primary_color, 0.1);
+
+    &:hover {
+      background-color: gtkalpha($primary_color, 0.2);
+    }
+
+    label.day-label {
+      font-weight: bold;
+    }
+  }
+
+  &:nth-child(7n + 1) {
+    border-left-width: 0;
+  }
+
+  &.today {
+    background-color: gtkalpha($primary_color, 0.2);
+
+    &:hover {
+      background-color: gtkalpha($primary_color, 0.3);
+      color: $primary_color;
+    }
+
+    &:selected {
+      background-color: gtkalpha($primary_color, 0.25);
+
+      &:hover {
+        background-color: gtkalpha($primary_color, 0.35);
+      }
+    }
+  }
+
+  label {
+    color: $fg_color;
+    font-size: 0.9rem;
+
+    &.day-label {
+      font-size: 1rem;
+    }
+  }
+
+  &.out-of-month {
+    background-color: $row_fill_color;
+
+    label {
+      color: $secondary_fg_color;
+    }
+  }
+
+  button {
+    padding: 0 $base_padding;
+    border-radius: 0;
+    border-bottom: none;
+    border-right: none;
+  }
+}
+
+// Month popover
+monthpopover > box {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+}
+
+.notes-section box > textview {
+  border-radius: $buttons_radius;
+  padding: $base_padding;
+
+  > text {
+    background: none;
+  }
+}
+
+// Agenda View CSS
+agenda-view list {
+  > row {
+    padding: 2px $base_padding * 2;
+  }
+
+  > label {
+    padding: $base_padding $base_padding * 2;
+  }
+}
+
+label.no-events {
+  font-style: italic;
+}
+
+// Search
+searchbutton > popover > arrow {
+  background: none;
+  border: none;
+}
+
+// Month selector
+datechooser {
+  padding: $base_padding;
+
+  .current-week {
+    background-color: $row_fill_color;
+    color: $fg_color;
+    border-radius: $buttons_radius;
+  }
+}
+
+menubutton {
+  &.sources-button {
+    margin-top: 0;
+    margin-bottom: 0;
+    border-radius: 0;
+    border-top-style: none;
+    border-bottom-style: none;
+
+    &:hover:not(:backdrop) {
+      background-image: none;
+      text-shadow: none;
+    }
+
+    > button.toggle {
+      border-radius: 0;
+
+      .title {
+        font-size: 10pt;
+        font-weight: normal;
+        padding: 0 $base_padding;
+      }
+
+      .subtitle {
+        font-size: 8pt;
+        padding: 0 $base_padding;
+      }
+
+      .calendar-color-image {
+        -gtk-icon-size: 12px;
+      }
+    }
+  }
+
+  stack > box {
+    border-spacing: $base_padding;
+  }
+
+  .topbar headerbar &.sources-button {
+    > button.toggle {
+      border-radius: 0 0 $buttons_radius $buttons_radius;
+    }
+  }
+}
+
+agenda-view list.background {
+  background-color: transparent;
+}
+
+//
+// Gnome Clocks
+//
+
+.large-button {
+  padding: $container_padding;
+}
+
+// alarms
+.alarm-time {
+  font-size: 2.5em;
+  font-weight: 300;
+}
+
+.clocks-ampm-toggle-button,
+.clocks-secondary-standalone-label {
+  font-size: 18pt;
+}
+
+.clocks-standalone-label,
+.clocks-ringing-label {
+  font-size: 6em;
+  font-weight: 300;
+}
+
+.clocks-ringing-title {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.clocks-alarm-setup-time {
+  font-size: 32pt;
+}
+
+// Timer Panel
+.clocks-timer-label,
+.clocks-spinbutton {
+  font-size: 48pt;
+}
+
+// disguise insensitive spinbuttons as normal labels
+.timer-panel .timer-header {
+  font-size: 20pt;
+  font-weight: 300;
+}
+
+.timer-countdown {
+  font-size: 40pt;
+  font-weight: 300;
+}
+
+/* Stopwatch Panel */
+.lap-time {
+  font-weight: bold;
+}
+
+.stopped-stopwatch label,
+.running-stopwatch label,
+.paused-stopwatch label {
+  font-size: 70px;
+  font-weight: lighter;
+}
+
+.stopped-stopwatch .seconds-label {
+  font-weight: 300;
+}
+
+.running-stopwatch .seconds-label,
+.running-stopwatch .miliseconds-label {
+  color: $primary_color;
+}
+
+.stopped-stopwatch .miliseconds-label,
+.running-stopwatch .miliseconds-label,
+.paused-stopwatch .miliseconds-label {
+  font-size: 50px;
+}
+
+.running-stopwatch .seconds-label,
+.paused-stopwatch .seconds-label {
+  font-weight: 300;
+}
+
+// World
+.clock-location {
+  font-weight: bolder;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.clock-time {
+  font-size: 2em;
+  padding: 0.2em 0.5em;
+  border-radius: 1em;
+}
+
+.none .clock-time {
+  background: gtkalpha(currentColor, 0.2);
+}
+
+.night .clock-time {
+  color: $blue_600;
+  background-color: gtkalpha($blue_500, 0.25);
+}
+
+.naut .clock-time,
+.astro .clock-time {
+  color: $orange_700;
+  background-color: gtkalpha($orange_500, 0.25);
+}
+
+.civil .clock-time,
+.day .clock-time {
+  color: $yellow_800;
+  background: gtkalpha($yellow_600, 0.25);
+}
+
+//
+// Gnome monitor
+//
+
+window.background.view:not(.nautilus-window) {
+  background-color: $base_color;
+}
